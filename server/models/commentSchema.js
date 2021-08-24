@@ -17,7 +17,32 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    replys: [
+        {
+            name: {
+                type: String
+            },
+            email: {
+                type: String
+            },
+            reply: {
+                type: String
+            },
+        },
+    ],
 });
+
+//Comments Storing function
+//-------------------------
+commentSchema.methods.addReply = async function (reply, name, email) {
+    try {
+        this.replys = this.replys.concat({ reply, name, email });
+        await this.save();
+        return this.replys;
+    } catch (error) {
+        console.log(error);
+    }
+};
 
 const Comment = mongoose.model("COMMENT", commentSchema);
 
