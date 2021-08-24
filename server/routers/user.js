@@ -66,7 +66,17 @@ userRouter.post("/login", async (req, res) => {
         console.log(err);
     }
 });
-
+//Display Videos 
+//-----------------------------------------
+userRouter.get("/authenticate", Authenticate, async (req, res) => {
+    const email = req.rootUser.email
+    try {
+        users = await User.findOne({ email: email });
+        res.status(200).send(users);
+    } catch (err) {
+        res.status(500).send(err)
+    }
+});
 //User Logout 
 //--------------------
 userRouter.get("/logout", (req, res) => {

@@ -57,26 +57,5 @@ commentRouter.delete("/deleteComment/:id", Authenticate, async (req, res) => {
         res.status(500).send(err)
     }
 });
-//Reply Section
-//--------------------
-commentRouter.post("/reply/:id", Authenticate, async (req, res) => {
-    const name = req.rootUser.name
-    const email = req.rootUser.email
-    const _id = req.params.id
-    try {
-        const { reply } = req.body;
-        const comment = await Comment.findOne({ _id: _id });
-
-        if (comment) {
-            const comments = await comment.addReply(
-                name, email, reply
-            );
-            await comment.save();
-            res.status(201).json({ message: "Your reply sent successfully" });
-        }
-    } catch (error) {
-        console.log(error);
-    }
-});
 
 module.exports = commentRouter;

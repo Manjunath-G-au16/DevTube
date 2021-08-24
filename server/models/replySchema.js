@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-const commentSchema = new mongoose.Schema({
-    videoID: {
+const replySchema = new mongoose.Schema({
+    commentID: {
         type: String,
         required: true
     },
@@ -13,12 +13,12 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    comment: {
+    reply: {
         type: String,
         required: true
     }
 });
 
-const Comment = mongoose.model("COMMENT", commentSchema);
+const Reply = mongoose.model("REPLY", replySchema);
 
-module.exports = Comment;
+module.exports = Reply;
