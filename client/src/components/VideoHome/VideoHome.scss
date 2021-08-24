@@ -107,10 +107,14 @@
                         flex-direction: row;
                         align-items: center;
                         gap: 10px;
+                        .user-comment {
+                            display: flex;
+                            flex-direction: column;
+                        }
                         h3 {
                             border-radius: 50%;
                             background: $primary-clr;
-                            padding: 10px 12px;
+                            padding: 10px 14px;
                             text-transform: uppercase;
                             color: $clrWhite;
                         }
@@ -129,6 +133,70 @@
                         gap: 10px;
                         button {
                             @include button-italic;
+                        }
+                    }
+                }
+                .reply-con {
+                    margin-left: 5%;
+                    padding: 10px;
+                    display: flex;
+                    flex-direction: column;
+                    .reply-sec {
+                        display: flex;
+                        flex-direction: row;
+                        width: 30%;
+                        margin-bottom: 10px;
+                    }
+                    .btnR {
+                        display: flex;
+                        flex-direction: row;
+                        gap: 5px;
+                        button {
+                            @include button;
+                            padding: 5px;
+                            font-size: 10px;
+                        }
+                    }
+                    .userR {
+                        width: 100%;
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        .user-logo {
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            gap: 10px;
+                            margin-bottom: 10px;
+                            .user-comment {
+                                display: flex;
+                                flex-direction: column;
+                            }
+                            h4 {
+                                border-radius: 50%;
+                                background: $primary-clr;
+                                padding: 10px 14px;
+                                text-transform: uppercase;
+                                color: $clrWhite;
+                            }
+                            h5 {
+                                text-transform: capitalize;
+                                color: $clrGrey;
+                            }
+                            h6 {
+                                font-weight: 400;
+                            }
+                        }
+                        .btn {
+                            float: right;
+                            display: flex;
+                            flex-direction: row;
+                            gap: 10px;
+                            button {
+                                @include button-italic;
+                            }
                         }
                     }
                 }

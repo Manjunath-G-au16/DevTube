@@ -18,7 +18,7 @@ const Sidebar = () => {
             <div className="navigation">
                 <div className="logo">
                     <i className="fas fa-chalkboard-teacher"></i>
-                    <h2>DCP</h2>
+                    <h2>DevTube</h2>
                 </div>
                 <ul>
                     <li className="list active">

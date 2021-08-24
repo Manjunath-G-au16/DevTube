@@ -9,12 +9,17 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 const VideoHome = () => {
     const [videos, setVideos] = useState([])
     const [video, setVideo] = useState({})
+    const [user, setUser] = useState({})
+    const [commId, setCommId] = useState("")
+    const [replyId, setReplyId] = useState("")
+    const [rID, setRID] = useState("")
     const [active, setActive] = useState()
-    const [editActive, setEditActive] = useState()
     const [loading, setLoading] = useState(true)
     const [userComment, setUserComment] = useState("")
+    const [userReply, setUserReply] = useState("")
     const [updateComment, setUpdateComment] = useState("")
     const [comments, setComments] = useState([])
+    const [replys, setReplys] = useState([])
     const history = useHistory();
     const fetchVideos = async () => {
         setActive(true)
@@ -85,6 +90,29 @@ const VideoHome = () => {
             history.push("/videoHome");
         }
     }
+    const fetchReplys = async (id) => {
+        try {
+            const res = await fetch(`/replys/${id}`, {
+                method: "GET",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
+            const data = await res.json();
+            setReplys(data);
+            setReplyId(id);
+            console.log(data);
+            if (!res.status === 200) {
+                const error = new Error(res.error);
+                throw error;
+            }
+        } catch (err) {
+            console.log(err);
+            history.push("/videoHome");
+        }
+    }
     const postComment = async () => {
         const videoID = video._id;
         const comment = userComment;
@@ -106,6 +134,27 @@ const VideoHome = () => {
             fetchComments(video._id);
         }
     };
+    const postReply = async (id) => {
+        const commentID = id;
+        const reply = userReply;
+        const res = await fetch("/uploadReply", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                reply,
+                commentID
+            }),
+        });
+        const data = await res.json();
+        if (!data) {
+            console.log("Reply not sent");
+        } else {
+            console.log("Reply sent");
+            fetchReplys(id);
+        }
+    };
     const editComment = async (id) => {
         const comment = updateComment;
         const res = await fetch(`/editComment/${id}`, {
@@ -123,7 +172,7 @@ const VideoHome = () => {
         } else {
             console.log("Comment sent");
             fetchComments(video._id);
-            setEditActive(false)
+            setCommId("")
         }
     };
     const delComment = async (id) => {
@@ -141,6 +190,46 @@ const VideoHome = () => {
             fetchComments(video._id);
         }
     };
+    const delReply = async (id) => {
+        const res = await fetch(`/deleteReply/${id}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+        const data = await res.json();
+        if (!data) {
+            console.log("Reply not sent");
+        } else {
+            console.log("Reply sent");
+            fetchReplys(rID);
+        }
+    };
+    const authenticate = async () => {
+        try {
+            const res = await fetch("/authenticate", {
+                method: "GET",
+                headers: {
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                credentials: "include",
+            });
+            const data = await res.json();
+            console.log(data);
+            setUser(data)
+            if (!res.status === 200) {
+                const error = new Error(res.error);
+                throw error;
+            }
+        } catch (err) {
+            console.log(err);
+            history.push("/");
+        }
+    };
+    useEffect(() => {
+        authenticate();
+    }, [])
     useEffect(() => {
         fetchVideos();
     }, [])
@@ -185,7 +274,7 @@ const VideoHome = () => {
                         {comments.slice(0).reverse().map((item, index) => {
                             return (
                                 <div className="comments" key={index}>
-                                    {(editActive === true) ?
+                                    {(commId === item._id) ?
                                         <>
                                             <input type="text"
                                                 name="comment"
@@ -196,7 +285,7 @@ const VideoHome = () => {
                                             />
                                             <div className="btn">
                                                 <button onClick={() => editComment(item._id)}>Update</button>
-                                                <button onClick={() => setEditActive(false)}>Cancel</button>
+                                                <button onClick={() => setCommId("")}>Cancel</button>
                                             </div>
                                         </>
                                         :
@@ -209,10 +298,47 @@ const VideoHome = () => {
                                                         <h5>{item.comment}</h5>
                                                     </div>
                                                 </div>
-                                                <div className="btn">
-                                                    <button onClick={() => setEditActive(true)}>Edit</button>
-                                                    <button onClick={() => delComment(item._id)}>Delete</button>
+                                                {
+                                                    user.email === item.email &&
+                                                    <div className="btn">
+                                                        <button onClick={() => setCommId(item._id)}>Edit</button>
+                                                        <button onClick={() => delComment(item._id)}>Delete</button>
+                                                    </div>
+                                                }
+                                            </div>
+                                            <div className="reply-con">
+                                                <div className="reply-sec">
+                                                    <input type="text"
+                                                        name="reply"
+                                                        placeholder="Reply"
+                                                        onChange={(e) => setUserReply(e.target.value)}
+                                                        required
+                                                    />
+                                                    <div className="btnR">
+                                                        <button onClick={() => postReply(item._id)}>Send</button>
+                                                        <button onClick={() => { fetchReplys(item._id); setRID(item._id) }}>Replies</button>
+                                                    </div>
                                                 </div>
+                                                {(replyId === item._id) &&
+                                                    replys.slice(0).reverse().map((item, index) => {
+                                                        return (
+                                                            <div className="userR">
+                                                                <div className="user-logo">
+                                                                    <h4>{[...item.name].reverse().splice(-1)}</h4>
+                                                                    <div className="user-comment">
+                                                                        <h5>{item.name}</h5>
+                                                                        <h6>{item.reply}</h6>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div className="btn">
+                                                                    {/* <button onClick={() => setCommId(item._id)}>Edit</button> */}
+                                                                    <button onClick={() => delReply(item._id)}>Delete</button>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
                                             </div>
                                         </div>
                                     }

@@ -40,6 +40,11 @@
             overflow: hidden;
             border: 5px solid $primary-clr;
             border-radius: 10px;
+            .loader {
+                width: 100%;
+                @include flex-center;
+                flex-direction: column;
+            }
             video {
                 grid-row: 1;
                 grid-column: 1;

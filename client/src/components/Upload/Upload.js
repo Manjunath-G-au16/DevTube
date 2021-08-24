@@ -4,12 +4,14 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./Upload.scss";
 import { useHistory } from "react-router-dom";
+import ScaleLoader from "react-spinners/ScaleLoader";
 
 const UploadVideo = () => {
     const [titl, setTitl] = useState("")
     const [desc, setDesc] = useState("")
     const [video, setVideo] = useState("")
     const [videoUrl, setVideoUrl] = useState("")
+    const [loadingImg, setLoadingImg] = useState(false)
     const history = useHistory();
     const postVideo = async () => {
         const title = titl;
@@ -31,7 +33,7 @@ const UploadVideo = () => {
         if (res.status === 422 || !data) {
             toast.dark("Plz fill the fields");
         } else {
-            toast.dark("Asked successfully");
+            toast.dark("Uploaded successfully");
         }
         history.push("/uploadVideo");
     };
@@ -44,6 +46,7 @@ const UploadVideo = () => {
             uploadVideo();
     }, [video])
     const uploadVideo = () => {
+        setLoadingImg(true);
         const data = new FormData();
         data.append("file", video);
         data.append("upload_preset", "merndev");
@@ -56,6 +59,7 @@ const UploadVideo = () => {
             .then((data) => {
                 console.log(data.secure_url);
                 setVideoUrl(data.secure_url);
+                setLoadingImg(false)
             })
             .catch((err) => {
                 console.log(err);
@@ -98,11 +102,17 @@ const UploadVideo = () => {
                     </div>
                     <div className="video">
                         <input type="file" name="video" id="video" accept="video/*" onChange={handleVideo} />
-                        <video src={videoUrl}></video>
-                        <label htmlFor="video">
-                            <i className="fas fa-cloud-upload-alt"></i>
-                            <h2>Upload Video</h2>
-                        </label>
+                        {loadingImg ? <div className="loader">
+                            <ScaleLoader color={"#2b343b"} loading={loadingImg} />
+                            Uploading...!
+                        </div> : <>
+                            <video src={videoUrl}></video>
+                            <label htmlFor="video">
+                                <i className="fas fa-cloud-upload-alt"></i>
+                                <h2>Upload Video</h2>
+                            </label>
+                        </>
+                        }
                     </div>
                 </div>
                 <div className="btn">
