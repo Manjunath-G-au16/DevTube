@@ -12,6 +12,8 @@ const VideoHome = () => {
     const [user, setUser] = useState({})
     const [commId, setCommId] = useState("")
     const [replyId, setReplyId] = useState("")
+    const [descActive, setDescActive] = useState(false)
+    const [replyActive, setReplyActive] = useState(false)
     const [rID, setRID] = useState("")
     const [active, setActive] = useState()
     const [loading, setLoading] = useState(true)
@@ -21,6 +23,12 @@ const VideoHome = () => {
     const [comments, setComments] = useState([])
     const [replys, setReplys] = useState([])
     const history = useHistory();
+    const handleDescToggle = () => {
+        setDescActive(!descActive);
+    }
+    const handleReplyToggle = () => {
+        setReplyActive(!replyActive);
+    }
     const fetchVideos = async () => {
         setActive(true)
         try {
@@ -247,7 +255,7 @@ const VideoHome = () => {
                                     <h3>{item.title}</h3>
                                 </div>
                                 <div className="video">
-                                    <video src={item.url}></video>
+                                    <img src={item.thumbnail} alt="" />
                                 </div>
                             </div>
                         )
@@ -261,6 +269,14 @@ const VideoHome = () => {
                     <div className="video">
                         <video src={video.url} controls></video>
                     </div>
+                    <div className="title">
+                        <h3>{video.title}</h3>
+                        <button onClick={handleDescToggle}>Description</button>
+                    </div>
+                    {(descActive === true) &&
+                        <div className="desc">
+                            <h5>{video.description}</h5>
+                        </div>}
                     <div className="comment-sec">
                         <input type="text"
                             name="comment"
@@ -316,10 +332,10 @@ const VideoHome = () => {
                                                     />
                                                     <div className="btnR">
                                                         <button onClick={() => postReply(item._id)}>Send</button>
-                                                        <button onClick={() => { fetchReplys(item._id); setRID(item._id) }}>Replies</button>
+                                                        <button onClick={() => { fetchReplys(item._id); setRID(item._id); handleReplyToggle() }}>Replies</button>
                                                     </div>
                                                 </div>
-                                                {(replyId === item._id) &&
+                                                {(replyId === item._id && replyActive === true) &&
                                                     replys.slice(0).reverse().map((item, index) => {
                                                         return (
                                                             <div className="userR">

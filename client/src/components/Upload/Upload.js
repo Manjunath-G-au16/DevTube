@@ -9,14 +9,18 @@ import ScaleLoader from "react-spinners/ScaleLoader";
 const UploadVideo = () => {
     const [titl, setTitl] = useState("")
     const [desc, setDesc] = useState("")
+    const [image, setImage] = useState("")
+    const [imageUrl, setImageUrl] = useState("")
     const [video, setVideo] = useState("")
     const [videoUrl, setVideoUrl] = useState("")
-    const [loadingImg, setLoadingImg] = useState(false)
+    const [loadingVideo, setLoadingVideo] = useState(false)
+    const [loadingImage, setLoadingImage] = useState(false)
     const history = useHistory();
     const postVideo = async () => {
         const title = titl;
         const description = desc;
         const url = videoUrl;
+        const thumbnail = imageUrl;
         const res = await fetch("/uploadVideo", {
             method: "POST",
             headers: {
@@ -25,7 +29,8 @@ const UploadVideo = () => {
             body: JSON.stringify({
                 title,
                 description,
-                url
+                url,
+                thumbnail
             }),
         });
         const data = await res.json();
@@ -37,16 +42,37 @@ const UploadVideo = () => {
         }
         history.push("/uploadVideo");
     };
+
     const handleVideo = (e) => {
-        setVideo(e.target.files[0]);
-        console.log(e.target.files[0]);
+        if (e.target.files[0].type.includes("video")) {
+            setVideo(e.target.files[0]);
+            console.log(e.target.files[0]);
+        }
+        else {
+            toast.dark("Invalid File Type");
+        }
+    }
+    const handleImage = (e) => {
+        if (e.target.files[0].type.includes("image")) {
+            setImage(e.target.files[0]);
+            console.log(e.target.files[0]);
+        }
+        else {
+            toast.dark("Invalid File Type");
+        }
     }
     useEffect(() => {
         (video !== "") &&
             uploadVideo();
     }, [video])
+
+    useEffect(() => {
+        (image !== "") &&
+            uploadImage();
+    }, [image])
+
     const uploadVideo = () => {
-        setLoadingImg(true);
+        setLoadingVideo(true);
         const data = new FormData();
         data.append("file", video);
         data.append("upload_preset", "merndev");
@@ -59,13 +85,35 @@ const UploadVideo = () => {
             .then((data) => {
                 console.log(data.secure_url);
                 setVideoUrl(data.secure_url);
-                setLoadingImg(false)
+                setLoadingVideo(false)
             })
             .catch((err) => {
                 console.log(err);
             });
 
         console.log("videoUrl:", videoUrl);
+    }
+    const uploadImage = () => {
+        setLoadingImage(true);
+        const data = new FormData();
+        data.append("file", image);
+        data.append("upload_preset", "merndev");
+        data.append("cloud_name", "modimanju");
+        fetch("https://api.cloudinary.com/v1_1/modimanju/image/upload", {
+            method: "post",
+            body: data,
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data.secure_url);
+                setImageUrl(data.secure_url);
+                setLoadingImage(false)
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+        console.log("imageUrl:", imageUrl);
     }
     // const authenticate = async () => {
     //     try {
@@ -96,14 +144,28 @@ const UploadVideo = () => {
             <Heading heading="Upload Video" />
             <div className="uploadvideo-sec">
                 <div className="uploadvideo-con">
+                    <div className="image">
+                        <input type="file" name="image" id="image" accept="image/*" onChange={handleImage} />
+                        {loadingImage ? <div className="loader">
+                            <ScaleLoader color={"#2b343b"} loading={loadingImage} />
+                            Uploading...!
+                        </div> : <>
+                            <img src={imageUrl} alt="" />
+                            <label htmlFor="image">
+                                <i className="fas fa-cloud-upload-alt"></i>
+                                <h2>Upload Image</h2>
+                            </label>
+                        </>
+                        }
+                    </div>
                     <div className="textarea">
                         <textarea className="title" name="title" placeholder="Title..." onChange={(e) => setTitl(e.target.value)} required></textarea>
                         <textarea className="description" name="description" placeholder="Description..." onChange={(e) => setDesc(e.target.value)} required></textarea>
                     </div>
                     <div className="video">
                         <input type="file" name="video" id="video" accept="video/*" onChange={handleVideo} />
-                        {loadingImg ? <div className="loader">
-                            <ScaleLoader color={"#2b343b"} loading={loadingImg} />
+                        {loadingVideo ? <div className="loader">
+                            <ScaleLoader color={"#2b343b"} loading={loadingVideo} />
                             Uploading...!
                         </div> : <>
                             <video src={videoUrl}></video>
