@@ -44,12 +44,12 @@ videoRouter.get("/myVideos", Authenticate, async (req, res) => {
 //-----------------------------------------
 videoRouter.post("/uploadVideo", Authenticate, async (req, res) => {
     const videoBy = req.rootUser.email
-    const { title, description, url } = req.body;
-    if (!title || !description || !url) {
+    const { title, description, url, thumbnail } = req.body;
+    if (!title || !description || !url || !thumbnail) {
         return res.status(422).json({ Error: "plz fill the fields properly" });
     }
     try {
-        const video = new Video({ videoBy, title, description, url });
+        const video = new Video({ videoBy, title, description, url, thumbnail });
         await video.save();
         res.status(201).json({ message: "Video uploaded successfully" });
     } catch (err) {
