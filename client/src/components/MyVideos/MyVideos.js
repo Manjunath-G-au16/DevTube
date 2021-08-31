@@ -76,7 +76,7 @@ const MyVideos = () => {
                                     <h3>{item.title}</h3>
                                 </div>
                                 <div className="video">
-                                    <video src={item.url}></video>
+                                    <img src={item.thumbnail} alt="" />
                                 </div>
                             </div>
                         )

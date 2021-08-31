@@ -17,14 +17,14 @@ const Sidebar = () => {
         <div className="nav">
             <div className="navigation">
                 <div className="logo">
-                    <i className="fas fa-chalkboard-teacher"></i>
+                    <i className="fab fa-youtube"></i>
                     <h2>DevTube</h2>
                 </div>
                 <ul>
                     <li className="list active">
                         <NavLink className="nav-link" to="/videos">
                             <span className="icon">
-                                <i className="fas fa-question-circle"></i>
+                                <i className="fab fa-youtube-square"></i>
                             </span>
                             <span className="title">Videos</span>
                         </NavLink>
@@ -32,14 +32,16 @@ const Sidebar = () => {
                     <li className="list">
                         <NavLink className="nav-link" to="/uploadVideo">
                             <span className="icon">
-                                <i className="fas fa-question-circle"></i></span>
+                                <i className="fas fa-caret-square-up"></i>
+                            </span>
                             <span className="title">Upload Video</span>
                         </NavLink>
                     </li>
                     <li className="list">
                         <NavLink className="nav-link" to="/myVideos">
                             <span className="icon">
-                                <i className="fas fa-question-circle"></i></span>
+                                <i className="fas fa-tasks"></i>
+                            </span>
                             <span className="title">My Videos</span>
                         </NavLink>
                     </li>
